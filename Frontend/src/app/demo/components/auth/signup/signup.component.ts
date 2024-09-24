@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EnterpriseService } from 'src/app/demo/service/Enterprise_service/enterprise.service';
 import { SweetAlert2Service } from 'src/app/demo/service/SweetAlert_service/sweet-alert2.service';
@@ -45,7 +45,7 @@ export class SignupComponent {
       logo: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern('[0-9]{8}')]],
-      role: [{ value: 'ENTREPRISE', disabled: true }]
+      roles: this.formBuilder.array([]) // Initialiser les rôles comme un FormArray
     });
   }
 
@@ -74,22 +74,35 @@ export class SignupComponent {
     }
   }
 
+  // Méthode pour gérer les changements de checkbox
+  onRoleChange(event: Event, role: string) {
+    const rolesArray: FormArray = this.signupForm.get('roles') as FormArray;
+
+    if ((event.target as HTMLInputElement).checked) {
+      rolesArray.push(this.formBuilder.control(role)); // Ajouter le rôle si coché
+    } else {
+      const index = rolesArray.controls.findIndex(x => x.value === role);
+      rolesArray.removeAt(index); // Supprimer le rôle si décoché
+    }
+  }
+
   // Soumission du formulaire de création de compte
   signup() {
     if (this.signupForm.valid) {
       const formData = new FormData();
 
-      // Append form data
-      formData.append('entreprise', new Blob([JSON.stringify({
+      // Crée un objet entreprise à partir des valeurs du formulaire
+      const entrepriseData = {
         matricule: this.signupForm.get('matricule')?.value,
         mdp: this.signupForm.get('mdp')?.value,
         nom: this.signupForm.get('nom')?.value,
         adresse: this.signupForm.get('adresse')?.value,
         email: this.signupForm.get('email')?.value,
         phone: this.signupForm.get('phone')?.value,
-        role: this.signupForm.get('role')?.value,
-      })], { type: 'application/json' }));
+        roles: this.signupForm.get('roles')?.value, // Récupérer les rôles sélectionnés
+      };
 
+      formData.append('entreprise', new Blob([JSON.stringify(entrepriseData)], { type: 'application/json' }));
       formData.append('logo', this.signupForm.get('logo')?.value);
 
       // Appel au service pour créer l'entreprise
@@ -104,10 +117,9 @@ export class SignupComponent {
         },
         error: (error) => {
           console.error('Signup failed', error);
-          // Gestion améliorée des erreurs HTTP
           let errorMessage = 'An error occurred while creating the account';
           if (error.error && error.error.message) {
-            errorMessage = error.error.message; // Si l'erreur contient un message, l'afficher
+            errorMessage = error.error.message;
           }
           this.sweetAlertService.Toast.fire({
             icon: 'error',

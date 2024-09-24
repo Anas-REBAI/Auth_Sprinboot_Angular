@@ -7,7 +7,7 @@ export interface Entreprise {
     logo: string;
     email: string;
     phone: number;
-    role: string;
+    roles: any;
 }
 
 

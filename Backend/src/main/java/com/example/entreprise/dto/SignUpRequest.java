@@ -4,6 +4,8 @@ import com.example.entreprise.entities.Role;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class SignUpRequest {
@@ -13,5 +15,5 @@ public class SignUpRequest {
     private String adresse;
     private String email;
     private Long phone;
-    private Role role;
+    private List<String> roles;
 }

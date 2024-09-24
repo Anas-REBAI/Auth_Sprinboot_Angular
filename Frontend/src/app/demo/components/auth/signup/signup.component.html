@@ -48,10 +48,27 @@
                     <label for="phone" class="block text-900 text-xl font-medium mb-2">Téléphone</label>
                     <input id="phone" type="tel" placeholder="Téléphone" formControlName="phone" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem" required>
 
-                    <!-- role -->
-                    <label for="role" class="block text-900 text-xl font-medium mb-2">Role</label>
-                    <input id="role" type="text" formControlName="role" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem" required>
-                    
+                    <!-- Rôle -->
+                    <label class="block text-900 text-xl font-medium mb-2">Roles</label>
+                    <div class="grid grid-nogutter gap-3 mb-5">
+                        <div class="col-6 flex align-items-center">
+                            <input type="checkbox" id="agent" (change)="onRoleChange($event, 'AGENT')" pInputCheckbox />
+                            <label for="agent" class="ml-2">AGENT</label>
+                        </div>
+                        <div class="col-6 flex align-items-center">
+                            <input type="checkbox" id="cordinateur" (change)="onRoleChange($event, 'CORDINATEUR')" pInputCheckbox />
+                            <label for="cordinateur" class="ml-2">CORDINATEUR</label>
+                        </div>
+                        <div class="col-6 flex align-items-center">
+                            <input type="checkbox" id="chef" (change)="onRoleChange($event, 'CHEF')" pInputCheckbox />
+                            <label for="chef" class="ml-2">CHEF</label>
+                        </div>
+                        <div class="col-6 flex align-items-center">
+                            <input type="checkbox" id="admin" (change)="onRoleChange($event, 'ADMIN')" pInputCheckbox />
+                            <label for="admin" class="ml-2">ADMIN</label>
+                        </div>
+                    </div>
+
                     <!-- Autres -->
                     <div class="w-full flex justify-content-center mb-5">
                         <a class="font-medium no-underline text-center cursor-pointer" style="color: var(--primary-color)" [routerLink]="['/auth/login']">Already have an account? Sign In</a>

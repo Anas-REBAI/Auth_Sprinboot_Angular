@@ -4,6 +4,8 @@ import com.example.entreprise.auth.JwtUtil;
 import com.example.entreprise.dto.*;
 import com.example.entreprise.entities.Entreprise;
 import com.example.entreprise.entities.Image;
+import com.example.entreprise.entities.Role;
+import com.example.entreprise.repositories.RoleRepository;
 import com.example.entreprise.services.CloudinaryService;
 import com.example.entreprise.services.EmailService;
 import com.example.entreprise.services.EntrepriseServiceImpl;
@@ -26,7 +28,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -42,6 +46,8 @@ public class ControllerEntreprise {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private CloudinaryService cloudinaryService;
+
+    private RoleRepository roleRepository;
 
 
     @Autowired
@@ -68,7 +74,17 @@ public class ControllerEntreprise {
         entreprise.setLogo(image);
         entreprise.setEmail(signUpRequest.getEmail());
         entreprise.setPhone(signUpRequest.getPhone());
-        entreprise.setRole(signUpRequest.getRole());
+
+        // Charger les rôles
+        List<Role> roles = new ArrayList<>();
+        for (String roleName : signUpRequest.getRoles()) {
+            Role role = roleRepository.findByName(roleName)
+                    .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+            roles.add(role);
+        }
+
+        // Ajouter les rôles à l'entreprise
+        entreprise.setRoles(roles);
 
         return iEntrepriseService.addEntreprise(entreprise);
     }
@@ -87,11 +103,9 @@ public class ControllerEntreprise {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getMatricule());
                 Entreprise entreprise =iEntrepriseService.findByMatricule(loginRequest.getMatricule());
                 String token = jwtUtil.createToken1(userDetails, entreprise);
-                //String token = jwtUtil.createToken(userDetails);
                 map.put("status", HttpStatus.OK.value());
                 map.put("message", "Authentication successful");
                 map.put("token", token);
-                map.put("role", entreprise.getRole());
                 return ResponseEntity.ok(map);
             } else {
                 map.put("status", HttpStatus.UNAUTHORIZED.value());

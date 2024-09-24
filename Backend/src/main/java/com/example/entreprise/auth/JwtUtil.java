@@ -6,13 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.AuthenticationException;
+import com.example.entreprise.entities.Role;
 
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -28,19 +27,6 @@ public class JwtUtil {
         this.jwtParser = Jwts.parser().setSigningKey(secret_key);
     }
 
-
-    public String createToken(UserDetails user, Entreprise entreprise) {
-        Claims claims = Jwts.claims().setSubject(user.getUsername());
-        Date tokenCreateTime = new Date();
-        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MILLISECONDS.toMillis(accessTokenValidity));
-        return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(tokenValidity)
-                .signWith(SignatureAlgorithm.HS256, secret_key)
-                .compact();
-    }
-
-
     public String createToken1(UserDetails userDetails, Entreprise entreprise) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", userDetails.getUsername());
@@ -49,7 +35,14 @@ public class JwtUtil {
         claims.put("logo", entreprise.getLogo());
         claims.put("email", entreprise.getEmail());
         claims.put("phone", entreprise.getPhone());
-        claims.put("role", entreprise.getRole());
+
+        // Extraire les noms des rôles de l'entreprise
+        List<String> roleNames = entreprise.getRoles()
+                .stream()
+                .map(Role::getName) // Assurez-vous que Role a un getName() pour obtenir le nom du rôle
+                .collect(Collectors.toList());
+
+        claims.put("roles", roleNames); // Ajoute la liste des noms de rôles aux claims
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -58,7 +51,6 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS256, secret_key)
                 .compact();
-
     }
 
 
