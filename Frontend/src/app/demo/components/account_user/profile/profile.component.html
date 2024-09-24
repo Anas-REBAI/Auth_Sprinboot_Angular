@@ -1,0 +1,27 @@
+<div class="grid">
+    
+    <div class="col-12">
+        <div class="card">
+            <h4>Paramètre du compte</h4>
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button" label="Profile" icon="pi pi-user" class="p-button-warning mr-2" (click)="changeTab('profileInformation')"></button>
+                    <button pButton type="button" label="Sécurité" icon="pi pi-lock" class="p-button-success mr-2" (click)="changeTab('profileSecurity')"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div *ngIf="selectedTab === 'profileInformation'">
+                <app-profile-informations></app-profile-informations>
+            </div>
+        
+            <div *ngIf="selectedTab === 'profileSecurity'">
+                <app-profile-delete></app-profile-delete>
+            </div>
+        </div>
+    </div>
+
+</div>

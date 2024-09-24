@@ -1,0 +1,54 @@
+<p-toast></p-toast>
+<div class="container-xl px-4 mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+
+            <!-- Change password card-->
+            <div class="card mb-4">
+                <div class="card-header">Change Password</div>
+                <div class="card-body">
+                    <form [formGroup]="pwdForm">
+                        <!-- Form Group (current password)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" for="currentPassword">Current Password</label>
+                            <input class="form-control" id="currentPassword" type="password" placeholder="Enter current password" formControlName="oldPassword">
+                        </div>
+                        <!-- Form Group (new password)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" for="newPassword">New Password</label>
+                            <input class="form-control" id="newPassword" type="password" placeholder="Enter new password" formControlName="newPassword">
+                        </div>
+                        <!-- Form Group (confirm password)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" for="confirmPassword">Confirm Password</label>
+                            <input class="form-control" id="confirmPassword" type="password" placeholder="Confirm new password" formControlName="confirmPassword">
+                        </div>
+                        <button class="btn btn-primary" type="button" (click)="updatePwd()" >Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Delete account card-->
+            <div class="card mb-4">
+                <div class="card-header">Delete Account</div>
+                <div class="card-body">
+                    <p>Deleting your account is a permanent action and cannot be undone. If you are sure you want to delete your account, select the button below.</p>
+                    <button class="btn btn-danger-soft text-danger" type="button" (click)="deleteDialog()">I understand, delete my account</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- btn delete facture Dialog -->
+<p-dialog [(visible)]="deleteAccountDialog" header="Confirm delete account" [modal]="true" [style]="{width:'450px'}">
+    <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>Are you sure you want to delete your account ?</span>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteAccountDialog=false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="deleteAccount()"></button>
+    </ng-template>
+</p-dialog>
